@@ -10,13 +10,17 @@ class DownloadCaptions(Step):
             if utils.caption_file_exist(url):
                 print('found existing caption file')
                 continue
-
-            source = YouTube(url)
-            en_caption = source.captions.get_by_language_code('a.en')
-            print(en_caption.generate_srt_captions())
+            print(url)
+            try:
+                source = YouTube(url)
+                en_caption = source.captions.get_by_language_code('a.en')
+                en_caption.generate_srt_captions()
+            except (KeyError, AttributeError):
+                print('Error when downloading caption for', url)
+                continue
 
             #save the caption to a file named Outpust.txt
-            text_file = open(utils.get_caption_path(url), "w", encoding='utf-8')
+            text_file = open(utils.get_caption_filepath(url), "w", encoding='utf-8')
             text_file.write(en_caption.generate_srt_captions())
             text_file.close()
 
